@@ -45,23 +45,13 @@ public class AuthenticationService {
                 .lastname(request.getLastName())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(Role.STUDENT)
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
         .build();
-    }
-
-    public List<Integer> getUserLocations() {
-        User user = repository.findByUsername(username).orElseThrow();
-        String[] locations = user.getLocations().split(",");
-        List<Integer> locationList = new ArrayList<>();
-        for (String location : locations) {
-            locationList.add(Integer.parseInt(location));
-        }
-        return locationList;
     }
 
     public String getUsernameRole(String username) {
@@ -90,7 +80,6 @@ public class AuthenticationService {
         }
         ///else keep the old password
         user.setRole(usernew.getRole());
-        user.setLocations(usernew.getLocations());
 
         repository.save(user);
     }

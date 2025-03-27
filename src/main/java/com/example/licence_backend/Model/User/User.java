@@ -1,6 +1,6 @@
 package com.example.licence_backend.Model.User;
 
-import com.example.licence_backend.Model.Test.TestHistoryItem;
+import com.example.licence_backend.Model.Test.Test;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -39,21 +39,17 @@ public class User implements UserDetails {
     @Setter
     private String email;
 
-    // One-to-many: Teacher has many students (students are users with role as students)
     @Getter
     @Setter
     @OneToMany(mappedBy = "teacher")
     private List<User> students;
 
-    // Many-to-one: A student has one teacher
     @ManyToOne
-    @JoinColumn(name = "teacher_id")  // Renaming column to avoid confusion
     private User teacher;
 
-    // One-to-many: A user can have multiple test history items
     @Getter
-    @OneToMany(mappedBy = "user")
-    private List<TestHistoryItem> testHistory;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Test> testHistory;
 
     public boolean isTeacher() {
         return this.role == Role.TEACHER;
