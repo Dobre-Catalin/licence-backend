@@ -5,12 +5,18 @@ import com.example.licence_backend.Model.Test.Test;
 import com.example.licence_backend.Model.User.User;
 import com.example.licence_backend.Repository.QuestionRepository;
 import com.example.licence_backend.Repository.TestRepository;
+import jakarta.activation.FileDataSource;
+import jakarta.annotation.Resource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,23 +35,37 @@ public class TestController {
 
     //create a test of N questions
     @GetMapping("/create/{n}")
-    public Test createTest(int n) {
+    public List<Long> createTest(int n) {
         Set<Question> createdTest;
         createdTest = questionRepository.findQuestionsRandom(n);
-        return new Test(createdTest);
+        List<Long> questionIds = createdTest.stream()
+                .map(Question::getId)
+                .collect(Collectors.toList());
+        return questionIds;
     }
 
     @PostMapping("/submit")
-    public void submitTest(Test test) {
+    public void submitTest(List<Long> questionIds, List<Set<String>> answers) {
+        //get the user from the security context
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        //create a test
+        Test test = new Test();
         test.setUser(user);
-        test.setGrade(test.getQuestions().stream().mapToInt(question -> {
-            if (question.getAnswers().equals(question.getCorrectAnswers())) {
-                return 1;
-            } else {
-                return 0;
+        //set the questions
+        for (Long questionId : questionIds) {
+            Question question = questionRepository.findById(questionId).orElse(null);
+            if (question != null) {
+                test.addQuestion(question);
             }
-        }).sum());
+        }
+        //set the answers
+        for (int i = 0; i < questionIds.size(); i++) {
+            Question question = questionRepository.findById(questionIds.get(i)).orElse(null);
+            if (question != null) {
+                question.setAnswers(answers.get(i));
+            }
+        }
+        //save the test
         testRepository.save(test);
     }
 }

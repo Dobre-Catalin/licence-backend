@@ -48,4 +48,8 @@ public class Test {
     public Test() {
 
     }
+
+    public void addQuestion(Question question) {
+        this.questions.add(question);
+    }
 }

@@ -2,6 +2,7 @@ package com.example.licence_backend.Config;
 
 import lombok.RequiredArgsConstructor;
 import com.example.licence_backend.Repository.UserRepository;
+import lombok.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -45,4 +46,13 @@ public class ApplicationConfig {
         return new BCryptPasswordEncoder();
     }
 
+    @Configuration
+    public class FileStorageConfig {
+        @Value("${app.images-dir}")
+        private String imagesPath;
+
+        public String getImagesPath() {
+            return imagesPath;
+        }
+    }
 }

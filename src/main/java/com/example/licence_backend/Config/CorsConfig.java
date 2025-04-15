@@ -1,5 +1,5 @@
 package com.example.licence_backend.Config;
-/*
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 @Configuration
 public class CorsConfig {
-
+/*
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -49,6 +49,5 @@ public class CorsConfig {
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
-
-}
 */
+}
