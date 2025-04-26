@@ -7,6 +7,7 @@ import com.example.licence_backend.Repository.QuestionRepository;
 import com.example.licence_backend.Repository.TestRepository;
 import jakarta.activation.FileDataSource;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,8 +25,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/test")
 public class TestController {
     //repo for test questions
+    @Autowired
     QuestionRepository questionRepository;
     //repo for tests
+    @Autowired
     TestRepository testRepository;
 
     //constructor
@@ -35,7 +38,7 @@ public class TestController {
 
     //create a test of N questions
     @GetMapping("/create/{n}")
-    public List<Long> createTest(int n) {
+    public List<Long> createTest(@PathVariable int n) {
         Set<Question> createdTest;
         createdTest = questionRepository.findQuestionsRandom(n);
         List<Long> questionIds = createdTest.stream()

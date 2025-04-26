@@ -45,14 +45,4 @@ public class ApplicationConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    @Configuration
-    public class FileStorageConfig {
-        @Value("${app.images-dir}")
-        private String imagesPath;
-
-        public String getImagesPath() {
-            return imagesPath;
-        }
-    }
 }

@@ -44,4 +44,26 @@ public class Misc {
         return ResponseEntity.ok().body("Image added");
     }
 
+    @PostMapping("/simulateModel")
+    public ResponseEntity<byte[]> simulateModel(@RequestParam("image") MultipartFile image) throws IOException {
+        byte[] imageBytes = image.getBytes();
+        String contentType = image.getContentType();
+
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        // Simulate U-Net processing delay
+        try {
+            Thread.sleep(2000); // 2 seconds
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // good practice
+        }
+
+        return ResponseEntity
+                .ok()
+                .header("Content-Type", contentType)
+                .body(imageBytes);
+    }
+
 }

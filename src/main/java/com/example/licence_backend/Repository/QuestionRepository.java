@@ -11,6 +11,6 @@ import java.util.Set;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     public Question findQuestionById(Long questionId);
 
-    @Query(value = "SELECT * FROM questions ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
+    @Query(value = "SELECT * FROM question ORDER BY RANDOM() LIMIT :limit", nativeQuery = true)
     public Set<Question> findQuestionsRandom(@Param("limit") int limit);
 }

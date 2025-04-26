@@ -8,8 +8,4 @@ import org.mapstruct.factory.Mappers;
 @Mapper
 public class QuestionMapper {
     QuestionMapper INSTANCE= Mappers.getMapper(QuestionMapper.class);
-
-    //map answers to answers
-    @Mapping(target = "answers", source = "answers")
-    Question mapQuestionDTOToQuestion(QuestionDTO questionDTO);
 }

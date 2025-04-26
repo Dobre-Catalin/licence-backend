@@ -1,6 +1,8 @@
 package com.example.licence_backend.Model.User;
 
 import com.example.licence_backend.Model.Test.Test;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,14 +44,20 @@ public class User implements UserDetails {
     @Getter
     @Setter
     @OneToMany(mappedBy = "teacher")
+    @JsonManagedReference
     private List<User> students;
 
     @ManyToOne
+    @JsonBackReference
     private User teacher;
 
     @Getter
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Test> testHistory;
+
+    @Getter
+    @Setter
+    boolean isActive;
 
     public boolean isTeacher() {
         return this.role == Role.TEACHER;
@@ -58,6 +66,10 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    public void addStudent(User student) {
+        this.students.add(student);
     }
 
     @Override
@@ -83,10 +95,5 @@ public class User implements UserDetails {
     @Override
     public boolean isCredentialsNonExpired() {
         return false;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 }

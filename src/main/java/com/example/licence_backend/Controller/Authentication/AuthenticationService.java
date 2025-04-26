@@ -46,6 +46,7 @@ public class AuthenticationService {
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.STUDENT)
+                .isActive(true)
                 .build();
         repository.save(user);
         var jwtToken = jwtService.generateToken(user);
@@ -82,6 +83,66 @@ public class AuthenticationService {
         user.setRole(usernew.getRole());
 
         repository.save(user);
+    }
+
+    public AuthenticationResponse registerAdmin(RegisterRequest request) {
+        var user = User.builder()
+                .firstname(request.getFirstName())
+                .lastname(request.getLastName())
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.ADMIN)
+                .build();
+        repository.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    public AuthenticationResponse registerInstructor(RegisterRequest request) {
+        var user = User.builder()
+                .firstname(request.getFirstName())
+                .lastname(request.getLastName())
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.TEACHER)
+                .build();
+        repository.save(user);
+        var jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    public List<User> getAllStudentsByName(String name, Role role) {
+        List<User> users = repository.findByUsernameContainingIgnoreCaseAndRole(name, role);
+        return users;
+    }
+
+    public List<User> getAllStudentsByTeacher(String teacherId) {
+        User teacher = repository.findByUsername(teacherId).orElseThrow();
+        List<User> students = new ArrayList<>();
+        for (User student : teacher.getStudents()) {
+            if (student.getRole() == Role.STUDENT) {
+                students.add(student);
+            }
+        }
+        return students;
+    }
+
+    public User getUserByUsername(String teacherId) {
+        User user = repository.findByUsername(teacherId).orElseThrow();
+        return user;
+    }
+
+    public void addStudentToTeacher(String studentId, String teacherId) {
+        User teacher = repository.findByUsername(teacherId).orElseThrow();
+        User student = repository.findByUsername(studentId).orElseThrow();
+        student.setTeacher(teacher);
+        repository.save(student);
+        teacher.addStudent(student);
+        repository.save(teacher);
     }
 }
 

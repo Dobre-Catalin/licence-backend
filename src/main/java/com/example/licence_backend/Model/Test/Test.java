@@ -38,6 +38,10 @@ public class Test {
 
     @Getter
     @Setter
+    private Integer timePerQuestion;
+
+    @Getter
+    @Setter
     @ManyToMany
     private Set<Question> questions;
 
