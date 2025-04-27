@@ -34,7 +34,7 @@ public class Test {
     @Getter
     @Setter
     @Nullable
-    private Integer grade;
+    private Double grade;
 
     @Getter
     @Setter

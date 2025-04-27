@@ -1,5 +1,6 @@
 package com.example.licence_backend.Controller;
 
+import com.example.licence_backend.Model.Mapper.SubmitTestDTO;
 import com.example.licence_backend.Model.Test.Question;
 import com.example.licence_backend.Model.Test.Test;
 import com.example.licence_backend.Model.User.User;
@@ -17,7 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,27 +51,52 @@ public class TestController {
     }
 
     @PostMapping("/submit")
-    public void submitTest(List<Long> questionIds, List<Set<String>> answers) {
-        //get the user from the security context
+    public void submitTest(@RequestBody SubmitTestDTO submitTestDTO) {
+        // Get the user from the security context
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        //create a test
+
+        // Create a test
         Test test = new Test();
         test.setUser(user);
-        //set the questions
-        for (Long questionId : questionIds) {
+        test.setGrade(0.0); // Use double for decimal points
+
+        Set<Question> questions = new HashSet<>();
+
+        // Set the questions
+        for (Long questionId : submitTestDTO.getQuestionIds()) {
             Question question = questionRepository.findById(questionId).orElse(null);
             if (question != null) {
-                test.addQuestion(question);
+                questions.add(question);
+
+                Set<String> correctAnswers = question.getAnswers(); // correct answers from database
+                List<String> userAnswers = submitTestDTO.getResponses().get(questionId.intValue()); // user's submitted answers
+
+                if (correctAnswers != null && userAnswers != null) {
+                    Set<String> userAnswersSet = new HashSet<>(userAnswers);
+
+                    // Check if there are any wrong answers
+                    boolean hasWrongAnswer = !correctAnswers.containsAll(userAnswersSet);
+
+                    if (hasWrongAnswer) {
+                        // User submitted an answer that isn't correct -> 0 points
+                        continue;
+                    } else {
+                        if (userAnswersSet.size() == correctAnswers.size()) {
+                            // All correct answers given
+                            test.setGrade(test.getGrade() + 1.0);
+                        } else {
+                            // Only some correct answers given -> partial score
+                            double partialScore = (double) userAnswersSet.size() / (double) correctAnswers.size();
+                            test.setGrade(test.getGrade() + partialScore);
+                        }
+                    }
+                }
             }
+            test.setQuestions(questions);
         }
-        //set the answers
-        for (int i = 0; i < questionIds.size(); i++) {
-            Question question = questionRepository.findById(questionIds.get(i)).orElse(null);
-            if (question != null) {
-                question.setAnswers(answers.get(i));
-            }
-        }
-        //save the test
+
+        // Save the test
         testRepository.save(test);
     }
+
 }
