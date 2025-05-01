@@ -18,10 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.time.Instant;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -59,6 +57,9 @@ public class TestController {
         Test test = new Test();
         test.setUser(user);
         test.setGrade(0.0); // Use double for decimal points
+        /// get time and set it to test
+        Date date = Date.from(Instant.now());
+        test.setStartTime(date);
 
         Set<Question> questions = new HashSet<>();
 
@@ -97,6 +98,19 @@ public class TestController {
 
         // Save the test
         testRepository.save(test);
+    }
+
+    @GetMapping("/getUserTests/{id}")
+    public List<Test> getUserTests(@PathVariable Long id) {
+        List<Test> tests = this.testRepository.findTestsByUserIdOrderByStartTimeDesc(id);
+        return tests;
+    }
+
+    @GetMapping("/getMyTests")
+    public List<Test> getMyTests() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<Test> tests = this.testRepository.getTestsByUserOrderByStartTime(user);
+        return tests;
     }
 
 }
