@@ -6,18 +6,10 @@ import com.example.licence_backend.Model.Test.Test;
 import com.example.licence_backend.Model.User.User;
 import com.example.licence_backend.Repository.QuestionRepository;
 import com.example.licence_backend.Repository.TestRepository;
-import jakarta.activation.FileDataSource;
-import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -113,4 +105,8 @@ public class TestController {
         return tests;
     }
 
+    @GetMapping("/testDetails/{id}")
+    public Test getTestDetails(@PathVariable Long id) {
+        return this.testRepository.findTestById(id);
+    }
 }

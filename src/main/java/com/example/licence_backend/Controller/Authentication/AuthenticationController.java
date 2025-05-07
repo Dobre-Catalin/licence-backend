@@ -116,4 +116,10 @@ public class AuthenticationController {
         service.addStudentToTeacher(studentId, teacherId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("get/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id){
+        User user = service.getUserById(id);
+        return ResponseEntity.ok(user);
+    }
 }

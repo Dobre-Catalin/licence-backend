@@ -31,8 +31,10 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/authentication/**").permitAll()
+                        .requestMatchers("/api/authentication/login", "api/authentication/register", "api/authentication/registerInstructor").permitAll()
+                        .requestMatchers("/api/authentication/registerAdmin").hasRole("ADMIN")
                         .requestMatchers("/api/**").authenticated()
+                        .requestMatchers("api/question/create").hasRole("TEACHER")
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

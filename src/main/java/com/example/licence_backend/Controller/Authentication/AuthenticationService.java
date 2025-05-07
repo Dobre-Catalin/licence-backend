@@ -144,6 +144,11 @@ public class AuthenticationService {
         teacher.addStudent(student);
         repository.save(teacher);
     }
+
+    public User getUserById(Long id) {
+        User user = repository.findById(id);
+        return user;
+    }
 }
 
 
