@@ -8,8 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Test {
@@ -33,7 +32,7 @@ public class Test {
     @Setter
     @Nullable
     @ElementCollection
-    private Set<String> answers;
+    private Map<Long, String> answers = new HashMap<>();
 
     @Getter
     @Setter
@@ -64,4 +63,6 @@ public class Test {
     public void addQuestion(Question question) {
         this.questions.add(question);
     }
+
+    public void addAnswer(Long questionId, String answer) {this.answers.put(questionId, answer);}
 }

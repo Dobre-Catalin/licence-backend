@@ -1,7 +1,6 @@
 package com.example.licence_backend.Controller.Authentication;
 
 import com.example.licence_backend.Model.User.Role;
-import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import com.example.licence_backend.Model.User.User;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +13,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @CrossOrigin
 public class AuthenticationController {
-    private final AuthenticationService service;
+    private final UserService service;
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ){
-        //return ResponseEntity.ok(service.autheticate(request));
         var response = service.autheticate(request);
         if(response == null){
             System.out.println("Response is null");
@@ -65,61 +63,5 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(response);
-    }
-
-    //get all users
-    @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers(){
-        return ResponseEntity.ok(service.getAllUsers());
-    }
-
-    @GetMapping("/studentsByTeacher/{username}")
-    public ResponseEntity<List<User>> getAllStudentsByTeacher(
-            @PathVariable("username") String teacherId
-    ){
-        User teacher = service.getUserByUsername(teacherId);
-        return ResponseEntity.ok(service.getAllStudentsByTeacher(teacherId));
-    }
-
-    @GetMapping("/users/{role}/{name}")
-    public ResponseEntity<List<User>> getAllUsersByRoleAndName(
-            @PathVariable("role") Role role,
-            @PathVariable("name") String name
-    ){
-        return ResponseEntity.ok(service.getAllStudentsByName(name, role));
-    }
-
-    //edit user
-    @PutMapping("/edit/{id}")
-    public ResponseEntity<User> editUser(
-            @PathVariable("id") Integer id,
-            @RequestBody User user
-    ){
-        service.editUser(user, id);
-        return ResponseEntity.ok(user);
-    }
-
-    //delete user
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteUser(
-            @PathVariable("id") Integer id
-    ){
-        service.deleteUser(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/addStudent/{studentId}/to/{teacherId}")
-    public ResponseEntity<Void> addStudentToTeacher(
-            @PathVariable("studentId") String studentId,
-            @PathVariable("teacherId") String teacherId
-    ){
-        service.addStudentToTeacher(studentId, teacherId);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("get/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id){
-        User user = service.getUserById(id);
-        return ResponseEntity.ok(user);
     }
 }

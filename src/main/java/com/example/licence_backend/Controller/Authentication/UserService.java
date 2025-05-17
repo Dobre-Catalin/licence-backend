@@ -2,7 +2,6 @@ package com.example.licence_backend.Controller.Authentication;
 
 import com.example.licence_backend.Config.JwtService;
 import lombok.RequiredArgsConstructor;
-import com.example.licence_backend.Config.JwtAuthenticationFilter;
 import com.example.licence_backend.Model.User.Role;
 import com.example.licence_backend.Model.User.User;
 import com.example.licence_backend.Repository.UserRepository;
@@ -15,7 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class AuthenticationService {
+public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;

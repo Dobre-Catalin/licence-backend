@@ -63,7 +63,8 @@ public class TestController {
 
                 Set<String> correctAnswers = question.getAnswers(); // correct answers from database
                 List<String> userAnswers = submitTestDTO.getResponses().get(questionId.intValue()); // user's submitted answers
-
+                String userAnswersAsString = String.join(",", userAnswers);
+                test.addAnswer(questionId, userAnswersAsString);
                 if (correctAnswers != null && userAnswers != null) {
                     Set<String> userAnswersSet = new HashSet<>(userAnswers);
 
